@@ -4,7 +4,84 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
+	"sync"
+
+	"github.com/jcelliott/lumber"
 )
+
+const VERSION = "1.0.1"
+
+type (
+	Logger interface {
+		Fatal(string, ...interface{})
+		Error(string, ...interface{})
+		Warn(string, ...interface{})
+		Info(string, ...interface{})
+		Debug(string, ...interface{})
+	}
+
+	Driver struct {
+		mutex   sync.Mutex
+		mutexes map[string]*sync.Mutex
+		dir     string
+		log     Logger
+	}
+)
+
+type Options struct {
+	Logger
+}
+
+func New(dir string, options *Options) (*Driver, error) {
+	dir = filepath.Clean(dir)
+
+	opts := Options{}
+
+	if options != nil {
+		opts = *options
+	}
+
+	if opts.Logger == nil {
+		opts.Logger = lumber.NewConsoleLogger((lumber.INFO))
+	}
+
+	driver := Driver{
+		dir:     dir,
+		mutexes: make(map[string]*sync.Mutex),
+		log:     opts.Logger,
+	}
+
+	if _, err := os.Stat(dir); err != nil {
+		opts.Logger.Debug("Using '%s' (database already exist)\n", dir)
+
+		return &driver, nil
+	}
+
+	opts.Logger.Debug("Creating the database at '%s'...\n", dir)
+
+	return &driver, os.MkdirAll(dir, 0755)
+}
+
+func (d *Driver) Write() error {
+
+}
+
+func (d *Driver) Read() error {
+
+}
+
+func (d *Driver) ReadAll() {
+
+}
+
+func (d *Driver) Delete() error {
+
+}
+
+func (d *Driver) getOrCreateMutex() *sync.Mutex {
+
+}
 
 type Address struct {
 	City    string
@@ -26,7 +103,7 @@ func main() {
 
 	db, err := New(dir, nil)
 	if err != nil {
-		fmt.Println("Error", err)
+		fmt.Println("Error ", err)
 	}
 
 	employees := []User{
@@ -38,5 +115,44 @@ func main() {
 		{"Daniel", "32", "17171717", "Strawberry", Address{"makassar", "sulawesi selatan", "indonesia", "1717"}},
 		{"Olivia", "27", "18181818", "Nanas", Address{"pontianak", "kalimantan barat", "indonesia", "1818"}},
 	}
-	
+
+	for _, value := range employees {
+		db.Write("users", value.Name, User{
+			Name:    value.Name,
+			Age:     value.Age,
+			Contact: value.Contact,
+			Company: value.Company,
+			Address: value.Address,
+		})
+	}
+
+	records, err := db.ReadAll("users")
+	if err != nil {
+		fmt.Println("Error ", err)
+	}
+
+	fmt.Println(records)
+
+	allUsers := []User{}
+
+	for _, value := range records {
+		employeeFound := User{}
+
+		if err := json.Unmarshal([]byte(f), &employeeFound); err != nil {
+			fmt.Println("Error ", err)
+		}
+
+		allUsers = append(allUsers, employeeFound)
+	}
+
+	fmt.Println((allUsers))
+
+	// if err := db.Delete("users", "John"); err != nil {
+	// 	fmt.Println("Error ", err)
+	// }
+
+	// if err := db.Delete("user", ""); err != nil {
+	// 	fmt.Println("Error ", err)
+	// }
+
 }
