@@ -26,7 +26,7 @@ func main() {
 
 	db, err := New(dir, nil)
 	if err != nil {
-		fmt.Println("Error", err)
+		fmt.Println("Error ", err)
 	}
 
 	employees := []User{
@@ -38,5 +38,22 @@ func main() {
 		{"Daniel", "32", "17171717", "Strawberry", Address{"makassar", "sulawesi selatan", "indonesia", "1717"}},
 		{"Olivia", "27", "18181818", "Nanas", Address{"pontianak", "kalimantan barat", "indonesia", "1818"}},
 	}
-	
+
+	for _, value := range employees {
+		db.Write("users", value.Name, User{
+			Name:    value.Name,
+			Age:     value.Age,
+			Contact: value.Contact,
+			Company: value.Company,
+			Address: value.Address,
+		})
+	}
+
+	records, err := db.ReadAll("users")
+	if err != nil {
+		fmt.Println("Error ", err)
+	}
+
+	fmt.Println(records)
+
 }
