@@ -3,8 +3,57 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jcelliott/lumber"
 	"os"
+	"sync"
 )
+
+const VERSION = "1.0.1"
+
+type (
+	Logger interface {
+		Fatal(string, ...interface{})
+		Error(string, ...interface{})
+		Warn(string, ...interface{})
+		Info(string, ...interface{})
+		Debug(string, ...interface{})
+	}
+
+	Driver struct {
+		mutex   sync.Mutex
+		mutexes map[string]*sync.Mutex
+		dir     string
+		log     Logger
+	}
+)
+
+type Options struct {
+	Logger
+}
+
+func New() () {
+
+}
+
+func Write() error {
+
+}
+
+func Read() error {
+
+}
+
+func ReadAll() () {
+
+}
+
+func Delete() error {
+
+}
+
+func getOrCreateMutex() *sync.Mutex {
+	
+}
 
 type Address struct {
 	City    string
