@@ -52,11 +52,15 @@ func New(dir string, options *Options) (*Driver, error) {
 		log:     opts.Logger,
 	}
 
-	if _, err := os.Stat(dir); err != nil{
+	if _, err := os.Stat(dir); err != nil {
 		opts.Logger.Debug("Using '%s' (database already exist)\n", dir)
 
-		return &
+		return &driver, nil
 	}
+
+	opts.Logger.Debug("Creating the database at '%s'...\n", dir)
+
+	return &driver, os.MkdirAll(dir, 0755)
 }
 
 func (d *Driver) Write() error {
