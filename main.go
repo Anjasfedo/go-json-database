@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jcelliott/lumber"
 	"os"
+	"path/filepath"
 	"sync"
+
+	"github.com/jcelliott/lumber"
 )
 
 const VERSION = "1.0.1"
@@ -31,28 +33,50 @@ type Options struct {
 	Logger
 }
 
-func New() () {
+func New(dir string, options *Options) (*Driver, error) {
+	dir = filepath.Clean(dir)
+
+	opts := Options{}
+
+	if options != nil {
+		opts = *options
+	}
+
+	if opts.Logger == nil {
+		opts.Logger = lumber.NewConsoleLogger((lumber.INFO))
+	}
+
+	driver := Driver{
+		dir:     dir,
+		mutexes: make(map[string]*sync.Mutex),
+		log:     opts.Logger,
+	}
+
+	if _, err := os.Stat(dir); err != nil{
+		opts.Logger.Debug("Using '%s' (database already exist)\n", dir)
+
+		return &
+	}
+}
+
+func (d *Driver) Write() error {
 
 }
 
-func Write() error {
+func (d *Driver) Read() error {
 
 }
 
-func Read() error {
+func (d *Driver) ReadAll() {
 
 }
 
-func ReadAll() () {
+func (d *Driver) Delete() error {
 
 }
 
-func Delete() error {
+func (d *Driver) getOrCreateMutex() *sync.Mutex {
 
-}
-
-func getOrCreateMutex() *sync.Mutex {
-	
 }
 
 type Address struct {
