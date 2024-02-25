@@ -56,4 +56,19 @@ func main() {
 
 	fmt.Println(records)
 
+	
+	allUsers := []User{}
+
+	for _,value := range records {
+		employeeFound := User{}
+
+		if err := json.Unmarshal([]byte(f), &employeeFound); err != nil {
+			fmt.Println("Error ", err)
+		}
+
+		allUsers = append(allUsers, employeeFound)
+	}
+
+	fmt.Println((allUsers))
+
 }
