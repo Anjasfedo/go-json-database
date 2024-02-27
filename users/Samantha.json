@@ -1,0 +1,12 @@
+{
+	"Name": "Samantha",
+	"Age": 28,
+	"Contact": "15151515",
+	"Company": "Pisang",
+	"Address": {
+		"City": "surabaya",
+		"State": "jawa timur",
+		"Country": "indonesia",
+		"Pincode": 1515
+	}
+}
