@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/jcelliott/lumber"
+	"go.opencensus.io/resource"
 )
 
 const VERSION = "1.0.1"
@@ -98,14 +100,58 @@ func (d *Driver) Write(collection, resource string, v interface{}) error {
 	if err := os.WriteFile(tempPath, b, 0644); err != nil {
 		return err
 	}
+
+	return os.Rename(tempPath, finalPath)
 }
 
-func (d *Driver) Read() error {
+func (d *Driver) Read(collection, resource string, v interface{}) error {
+	if collection == "" {
+		return fmt.Errorf("Missing collection")
+	}
 
+	if resource == "" {
+		return fmt.Errorf("Missing Resource")
+	}
+
+	record := filepath.Join(d.dir, collection, resource)
+
+	if _, err := stat(record); err != nil {
+		return err
+	}
+
+	b, err := os.ReadFile(record + ".json")
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(b, &v)
 }
 
-func (d *Driver) ReadAll() {
+func (d *Driver) ReadAll(collection string) ([]string, error) {
+	if collection == "" {
+		return nil, fmt.Errorf("Missing collection")
+	}
 
+	dir := filepath.Join(d.dir, collection)
+
+	if _, err := stat(dir); err != nil {
+		return nil, err
+	}
+
+	files, _ := os.ReadDir(dir)
+
+	var records []string
+
+	for _, file := range files {
+		b, err := os.ReadFile(filepath.Join(dir, file.Name()))
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, string(b))
+	}
+
+	return records, nil
 }
 
 func (d *Driver) Delete() error {
@@ -113,10 +159,9 @@ func (d *Driver) Delete() error {
 }
 
 func (d *Driver) getOrCreateMutex(collection string) *sync.Mutex {
-
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
-	
+
 	m, ok := d.mutexes[collection]
 	if !ok {
 		m = &sync.Mutex{}
