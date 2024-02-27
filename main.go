@@ -63,7 +63,41 @@ func New(dir string, options *Options) (*Driver, error) {
 	return &driver, os.MkdirAll(dir, 0755)
 }
 
-func (d *Driver) Write() error {
+func (d *Driver) Write(collection, resource string, v interface{}) error {
+	if collection == "" {
+		return fmt.Errorf("Missing collection")
+	}
+
+	if resource == "" {
+		return fmt.Errorf("Missing Resource")
+	}
+
+	mutex := d.getOrCreateMutex(collection)
+
+	mutex.Lock()
+
+	defer mutex.Unlock()
+
+	dir := filepath.Join(d.dir, collection)
+
+	finalPath := filepath.Join(dir, resource+".json")
+
+	tempPath := finalPath + ".tmp"
+
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+
+	b, err := json.MarshalIndent(v, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	b = append(b, byte('\n'))
+
+	if err := os.WriteFile(tempPath, b, 0644); err != nil {
+		return err
+	}
 
 }
 
