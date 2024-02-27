@@ -1,0 +1,12 @@
+{
+	"Name": "Michael",
+	"Age": 30,
+	"Contact": "14141414",
+	"Company": "Anggur",
+	"Address": {
+		"City": "bandung",
+		"State": "jawa barat",
+		"Country": "indonesia",
+		"Pincode": 1414
+	}
+}

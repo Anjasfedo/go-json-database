@@ -1,0 +1,12 @@
+{
+	"Name": "Daniel",
+	"Age": 32,
+	"Contact": "17171717",
+	"Company": "Strawberry",
+	"Address": {
+		"City": "makassar",
+		"State": "sulawesi selatan",
+		"Country": "indonesia",
+		"Pincode": 1717
+	}
+}

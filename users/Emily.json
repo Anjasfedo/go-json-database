@@ -1,0 +1,12 @@
+{
+	"Name": "Emily",
+	"Age": 26,
+	"Contact": "16161616",
+	"Company": "Mangga",
+	"Address": {
+		"City": "medan",
+		"State": "sumatera utara",
+		"Country": "indonesia",
+		"Pincode": 1616
+	}
+}

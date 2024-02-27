@@ -1,0 +1,12 @@
+{
+	"Name": "Olivia",
+	"Age": 27,
+	"Contact": "18181818",
+	"Company": "Nanas",
+	"Address": {
+		"City": "pontianak",
+		"State": "kalimantan barat",
+		"Country": "indonesia",
+		"Pincode": 1818
+	}
+}

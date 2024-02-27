@@ -1,0 +1,12 @@
+{
+	"Name": "Alice",
+	"Age": 25,
+	"Contact": "13131313",
+	"Company": "Jeruk",
+	"Address": {
+		"City": "jakarta",
+		"State": "jakarta",
+		"Country": "indonesia",
+		"Pincode": 1313
+	}
+}
